@@ -10,7 +10,7 @@ using namespace std::chrono_literals;
 constexpr auto use_nothrow_awaitable = asio::as_tuple(asio::use_awaitable);
 using async_void = asio::awaitable<void>;
 
-class Ping
+class Ping:public std::enable_shared_from_this<Ping>
 {
 
 private:
@@ -49,6 +49,8 @@ public:
             timer_.expires_after(1ms);
             co_await timer_.async_wait(use_nothrow_awaitable);
         }
+        timer_.expires_after(3000ms);
+        timer_.async_wait([this](const asio::error_code& ec){this->stop();});
         co_return;
     }
 
