@@ -28,7 +28,19 @@ meson compile -C build.gcc
 ```
 
 ```shell
+#gcc in devcontainer
+CXX=gcc meson setup build.gcc
+meson compile -C build.gcc
+```
+
+```shell
 #clang msys2 in windows
+CXX=clang meson setup build.clang
+meson compile -C build.clang
+```
+
+```shell
+#clang in devcontainer
 CXX=clang meson setup build.clang
 meson compile -C build.clang
 ```
