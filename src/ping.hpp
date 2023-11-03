@@ -8,6 +8,7 @@
 #include <iostream>
 #include <chrono>
 #include <cmath>
+#include <regex>
 
 #include "icmp_header.hpp"
 #include "ipv4_header.hpp"
@@ -168,23 +169,19 @@ private:
         }
     }
 
-    /// @brief generate IPs according to '192.168.1.1/24'
+    /// @brief generate IPs according to '192.168.1.*'
     /// @param sv
     void generate_ips(std::string_view sv)
     {
         std::string ip_base;
         int subnet = 32;
-        if (sv.find('/') != std::string::npos)
+        if (sv.find('*') != std::string::npos)
         {
             ip_base = std::string(sv).substr(0, sv.find_last_of('.'));
-            subnet = std::stoi(std::string(sv).substr(sv.find('/') + 1));
+
             int start = 1;
             int end = 254;
-            if (subnet >= 24 && subnet <= 32)
-            {
-                start = 1;
-                end = pow(2, 32 - subnet) - 2;
-            }
+
             for (int i = start; i <= end; i++)
             {
                 std::string ip = ip_base + "." + std::to_string(i);
@@ -205,3 +202,25 @@ public:
         return addresses_.size()>0;
     }
 };
+
+bool isValidIP(const std::string& ip) {
+    std::regex IPv4Pattern1(
+        "^([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
+        "\\."
+        "([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])"                   
+        "\\."
+        "([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])"                    
+        "\\."
+        "\\*$" 
+    );
+    std::regex IPv4Pattern2(
+        "^([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
+        "\\."
+        "([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])"                   
+        "\\."
+        "([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])"                    
+        "\\."
+        "([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9])$" 
+    );
+    return std::regex_match(ip, IPv4Pattern1) || std::regex_match(ip, IPv4Pattern2);
+}
