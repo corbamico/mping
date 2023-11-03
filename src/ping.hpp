@@ -1,4 +1,6 @@
+#if defined(_WIN32) || defined(__CYGWIN__)
 #include <sdkddkver.h>
+#endif
 #ifdef __clang__
 #define ASIO_HAS_CO_AWAIT
 #endif
